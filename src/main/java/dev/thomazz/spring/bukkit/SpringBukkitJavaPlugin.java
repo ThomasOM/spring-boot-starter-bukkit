@@ -7,13 +7,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public abstract class SpringBukkitJavaPlugin extends JavaPlugin {
-    private PaperCommandManager commandManager;
     private AnnotationConfigApplicationContext context;
 
     @Override
     public void onEnable() {
-        this.commandManager = new PaperCommandManager(this);
-
         // Use a multi class loader to look for plugin classes
         Class<? extends SpringBukkitJavaPlugin> type = this.getClass();
         ClassLoader defaultClassLoader = Thread.currentThread().getContextClassLoader();
@@ -24,8 +21,10 @@ public abstract class SpringBukkitJavaPlugin extends JavaPlugin {
         try {
             this.context = new AnnotationConfigApplicationContext();
             this.context.register(SpringBukkit.class);
-            this.context.getBeanFactory().registerSingleton(PaperCommandManager.class.getName(), this.commandManager);
-            this.context.getBeanFactory().registerSingleton(Plugin.class.getName(), this);
+
+            this.context.getBeanFactory().registerSingleton(PaperCommandManager.class.getSimpleName(),new PaperCommandManager(this));
+            this.context.getBeanFactory().registerSingleton(Plugin.class.getSimpleName(), this);
+
             this.context.refresh();
         } finally {
             Thread.currentThread().setContextClassLoader(defaultClassLoader);
