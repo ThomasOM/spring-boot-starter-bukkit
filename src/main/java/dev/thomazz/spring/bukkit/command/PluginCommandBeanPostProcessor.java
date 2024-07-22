@@ -24,7 +24,7 @@ public class PluginCommandBeanPostProcessor implements DestructionAwareBeanPostP
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, @Nonnull String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(@Nonnull Object bean, @Nonnull String beanName) throws BeansException {
         if (!bean.getClass().isAnnotationPresent(PluginCommand.class)) {
             return bean;
         }

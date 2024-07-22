@@ -23,7 +23,7 @@ public class PluginListenerBeanPostProcessor implements DestructionAwareBeanPost
     }
 
     @Override
-    public Object postProcessAfterInitialization(@Nonnull Object bean, @Nonnull String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(@Nonnull Object bean, @Nonnull String beanName) throws BeansException {
         if (!bean.getClass().isAnnotationPresent(PluginListener.class)) {
             return bean;
         }

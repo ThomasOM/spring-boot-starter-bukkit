@@ -25,7 +25,7 @@ public class PluginTaskBeanPostProcessor implements BeanPostProcessor {
     }
 
     @Override
-    public Object postProcessAfterInitialization(@Nonnull Object bean, @Nonnull String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(@Nonnull Object bean, @Nonnull String beanName) throws BeansException {
         for (Method declaredMethod : bean.getClass().getDeclaredMethods()) {
             if (!declaredMethod.isAnnotationPresent(PluginTask.class)) {
                 continue;

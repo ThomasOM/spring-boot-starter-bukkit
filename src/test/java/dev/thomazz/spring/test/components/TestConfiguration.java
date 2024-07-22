@@ -1,9 +1,9 @@
 package dev.thomazz.spring.test.components;
 
 import dev.thomazz.spring.bukkit.configuration.PluginConfiguration;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @PluginConfiguration("test")
 public class TestConfiguration {
     private String value1;
