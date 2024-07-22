@@ -2,11 +2,10 @@ package dev.thomazz.spring.bukkit;
 
 import co.aikar.commands.PaperCommandManager;
 import dev.thomazz.spring.bukkit.util.MultiClassLoader;
-import lombok.Getter;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@Getter
 public abstract class SpringBukkitJavaPlugin extends JavaPlugin {
     private PaperCommandManager commandManager;
     private AnnotationConfigApplicationContext context;
@@ -25,7 +24,8 @@ public abstract class SpringBukkitJavaPlugin extends JavaPlugin {
         try {
             this.context = new AnnotationConfigApplicationContext();
             this.context.register(SpringBukkit.class);
-            this.registerBeanTypeAgnostic(type, this);
+            this.context.getBeanFactory().registerSingleton(PaperCommandManager.class.getName(), this.commandManager);
+            this.context.getBeanFactory().registerSingleton(Plugin.class.getName(), this);
             this.context.refresh();
         } finally {
             Thread.currentThread().setContextClassLoader(defaultClassLoader);
@@ -37,10 +37,5 @@ public abstract class SpringBukkitJavaPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         this.context.close();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends SpringBukkitJavaPlugin> void registerBeanTypeAgnostic(Class<T> type, Object plugin) {
-        this.context.registerBean(type, () -> (T) plugin);
     }
 }

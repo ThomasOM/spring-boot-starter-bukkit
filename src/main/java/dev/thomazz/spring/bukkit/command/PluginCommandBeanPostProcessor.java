@@ -2,8 +2,8 @@ package dev.thomazz.spring.bukkit.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.PaperCommandManager;
-import dev.thomazz.spring.bukkit.SpringBukkitJavaPlugin;
 import jakarta.annotation.Nonnull;
+import org.bukkit.plugin.Plugin;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
@@ -13,11 +13,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PluginCommandBeanPostProcessor implements DestructionAwareBeanPostProcessor {
-    private final SpringBukkitJavaPlugin plugin;
+    private final Plugin plugin;
+    private final PaperCommandManager commandManager;
 
     @Autowired
-    public PluginCommandBeanPostProcessor(SpringBukkitJavaPlugin plugin) {
+    public PluginCommandBeanPostProcessor(Plugin plugin, PaperCommandManager commandManager) {
         this.plugin = plugin;
+        this.commandManager = commandManager;
         this.plugin.getLogger().info("Registered plugin command bean post processor");
     }
 
@@ -32,8 +34,9 @@ public class PluginCommandBeanPostProcessor implements DestructionAwareBeanPostP
             throw new BeanCreationException(message);
         }
 
-        PaperCommandManager commandManager = this.plugin.getCommandManager();
-        commandManager.registerCommand((BaseCommand) bean);
+        this.commandManager.registerCommand((BaseCommand) bean);
+
+        this.plugin.getLogger().info("Registered plugin command: " + beanName);
         return bean;
     }
 
@@ -48,7 +51,8 @@ public class PluginCommandBeanPostProcessor implements DestructionAwareBeanPostP
             throw new FatalBeanException(message);
         }
 
-        PaperCommandManager commandManager = this.plugin.getCommandManager();
-        commandManager.unregisterCommand((BaseCommand) bean);
+        this.commandManager.unregisterCommand((BaseCommand) bean);
+
+        this.plugin.getLogger().info("Unregistered plugin command: " + beanName);
     }
 }

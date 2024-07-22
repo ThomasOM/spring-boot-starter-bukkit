@@ -1,9 +1,9 @@
 package dev.thomazz.spring.bukkit.listener;
 
-import dev.thomazz.spring.bukkit.SpringBukkitJavaPlugin;
 import jakarta.annotation.Nonnull;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PluginListenerBeanPostProcessor implements DestructionAwareBeanPostProcessor {
-    private final SpringBukkitJavaPlugin plugin;
+    private final Plugin plugin;
 
     @Autowired
-    public PluginListenerBeanPostProcessor(SpringBukkitJavaPlugin plugin) {
+    public PluginListenerBeanPostProcessor(Plugin plugin) {
         this.plugin = plugin;
         this.plugin.getLogger().info("Registered plugin listener bean post processor");
     }
@@ -35,6 +35,9 @@ public class PluginListenerBeanPostProcessor implements DestructionAwareBeanPost
 
         PluginManager pluginManager = this.plugin.getServer().getPluginManager();
         pluginManager.registerEvents((Listener) bean, this.plugin);
+
+        this.plugin.getLogger().info("Registered plugin listener: " + beanName);
+
         return bean;
     }
 
@@ -50,5 +53,7 @@ public class PluginListenerBeanPostProcessor implements DestructionAwareBeanPost
         }
 
         HandlerList.unregisterAll((Listener) bean);
+
+        this.plugin.getLogger().info("Unregistered plugin listener: " + beanName);
     }
 }

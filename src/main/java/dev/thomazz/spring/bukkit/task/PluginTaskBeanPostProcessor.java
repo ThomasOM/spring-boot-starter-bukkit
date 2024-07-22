@@ -1,7 +1,7 @@
 package dev.thomazz.spring.bukkit.task;
 
-import dev.thomazz.spring.bukkit.SpringBukkitJavaPlugin;
 import jakarta.annotation.Nonnull;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.springframework.beans.BeansException;
@@ -14,11 +14,11 @@ import java.lang.reflect.Method;
 
 @Component
 public class PluginTaskBeanPostProcessor implements BeanPostProcessor {
-    private final SpringBukkitJavaPlugin plugin;
+    private final Plugin plugin;
     private final ConfigurableApplicationContext context;
 
     @Autowired
-    public PluginTaskBeanPostProcessor(SpringBukkitJavaPlugin plugin, ConfigurableApplicationContext context) {
+    public PluginTaskBeanPostProcessor(Plugin plugin, ConfigurableApplicationContext context) {
         this.plugin = plugin;
         this.context = context;
         this.plugin.getLogger().info("Registered plugin task bean post processor");
@@ -45,6 +45,8 @@ public class PluginTaskBeanPostProcessor implements BeanPostProcessor {
             if (!annotation.name().isEmpty()) {
                 this.context.getBeanFactory().registerSingleton(annotation.name(), task);
             }
+
+            this.plugin.getLogger().info("Registered plugin task: " + beanName);
         }
 
         return bean;
